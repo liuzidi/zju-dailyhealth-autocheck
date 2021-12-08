@@ -148,24 +148,11 @@ class HealthCheckInHelper(ZJULogin):
         return take_out_json(response.text)
 
     def take_in(self, geo_info: dict):
-        formatted_address = geo_info.get("regeocode").get("formatted_address")
-        address_component = geo_info.get("regeocode").get("addressComponent")
-        if not formatted_address or not address_component: return
-
-        # 获得id和uid参数
         res = self.sess.get(self.BASE_URL, headers=self.headers)
-        #html = res.content.decode()
-        #new_info_tmp = json.loads(re.findall(r'def = ({[^\n]+})', html)[0])
-        #new_id = new_info_tmp['id']
-        #new_uid = new_info_tmp['uid']
-        # 拼凑geo信息
-        lng, lat = address_component.get("streetNumber").get("location").split(",")
-        geo_api_info_dict = {"type": "complete", "info": "SUCCESS", "status": 1, "cEa": "jsonp_859544_",
-                             "position": {"Q": lat, "R": lng, "lng": lng, "lat": lat},
-                             "message": "Get ipLocation success.Get address success.", "location_type": "ip",
-                             "accuracy": "null", "isConverted": "true", "addressComponent": address_component,
-                             "formattedAddress": formatted_address, "roads": [], "crosses": [], "pois": []}
-
+        # html = res.content.decode()
+        # new_info_tmp = json.loads(re.findall(r'def = ({[^\n]+})', html)[0])
+        # new_id = new_info_tmp['id']
+        # new_uid = new_info_tmp['uid']
         data = {
             'sfymqjczrj': '0',
             'zjdfgj': '',
@@ -205,20 +192,19 @@ class HealthCheckInHelper(ZJULogin):
             'remark': '',
             # 浙江省杭州市西湖区三墩镇西湖国家广告产业园西湖广告大厦
             # '\u6D59\u6C5F\u7701\u676D\u5DDE\u5E02\u897F\u6E56\u533A\u4E09\u58A9\u9547\u897F\u6E56\u56FD\u5BB6\u5E7F\u544A\u4EA7\u4E1A\u56ED\u897F\u6E56\u5E7F\u544A\u5927\u53A6',
-            'address': formatted_address,
+            'address': '\u6D59\u6C5F\u7701\u676D\u5DDE\u5E02\u897F\u6E56\u533A\u4E09\u58A9\u9547\u897F\u6E56\u56FD\u5BB6\u5E7F\u544A\u4EA7\u4E1A\u56ED\u897F\u6E56\u5E7F\u544A\u5927\u53A6',
             # {"type":"complete","info":"SUCCESS","status":1,"cEa":"jsonp_859544_","position":{"Q":30.30678,"R":120.06375000000003,"lng":120.06375,"lat":30.30678},"message":"Get ipLocation success.Get address success.","location_type":"ip","accuracy":null,"isConverted":true,"addressComponent":{"citycode":"0571","adcode":"330106","businessAreas":[],"neighborhoodType":"","neighborhood":"","building":"","buildingType":"","street":"西园三路","streetNumber":"1号","country":"中国","province":"浙江省","city":"杭州市","district":"西湖区","township":"三墩镇"},"formattedAddress":"浙江省杭州市西湖区三墩镇西湖国家广告产业园西湖广告大厦","roads":[],"crosses":[],"pois":[]}
             # '{"type":"complete","info":"SUCCESS","status":1,"cEa":"jsonp_859544_","position":{"Q":30.30678,"R":120.06375000000003,"lng":120.06375,"lat":30.30678},"message":"Get ipLocation success.Get address success.","location_type":"ip","accuracy":null,"isConverted":true,"addressComponent":{"citycode":"0571","adcode":"330106","businessAreas":[],"neighborhoodType":"","neighborhood":"","building":"","buildingType":"","street":"\u897F\u56ED\u4E09\u8DEF","streetNumber":"1\u53F7","country":"\u4E2D\u56FD","province":"\u6D59\u6C5F\u7701","city":"\u676D\u5DDE\u5E02","district":"\u897F\u6E56\u533A","township":"\u4E09\u58A9\u9547"},"formattedAddress":"\u6D59\u6C5F\u7701\u676D\u5DDE\u5E02\u897F\u6E56\u533A\u4E09\u58A9\u9547\u897F\u6E56\u56FD\u5BB6\u5E7F\u544A\u4EA7\u4E1A\u56ED\u897F\u6E56\u5E7F\u544A\u5927\u53A6","roads":[],"crosses":[],"pois":[]}',
-            'geo_api_info': geo_api_info_dict,
+            'geo_api_info': '{"type":"complete","info":"SUCCESS","status":1,"cEa":"jsonp_859544_","position":{"Q":30.30678,"R":120.06375000000003,"lng":120.06375,"lat":30.30678},"message":"Get ipLocation success.Get address success.","location_type":"ip","accuracy":null,"isConverted":true,"addressComponent":{"citycode":"0571","adcode":"330106","businessAreas":[],"neighborhoodType":"","neighborhood":"","building":"","buildingType":"","street":"\u897F\u56ED\u4E09\u8DEF","streetNumber":"1\u53F7","country":"\u4E2D\u56FD","province":"\u6D59\u6C5F\u7701","city":"\u676D\u5DDE\u5E02","district":"\u897F\u6E56\u533A","township":"\u4E09\u58A9\u9547"},"formattedAddress":"\u6D59\u6C5F\u7701\u676D\u5DDE\u5E02\u897F\u6E56\u533A\u4E09\u58A9\u9547\u897F\u6E56\u56FD\u5BB6\u5E7F\u544A\u4EA7\u4E1A\u56ED\u897F\u6E56\u5E7F\u544A\u5927\u53A6","roads":[],"crosses":[],"pois":[]}',
             # 浙江省 杭州市 西湖区
             # '\u6D59\u6C5F\u7701 \u676D\u5DDE\u5E02 \u897F\u6E56\u533A'
-            'area': "{} {} {}".format(address_component.get("province"), address_component.get("city"),
-                                      address_component.get("district")),
+            'area': '\u6D59\u6C5F\u7701 \u676D\u5DDE\u5E02 \u897F\u6E56\u533A',
             # 浙江省
             # '\u6D59\u6C5F\u7701'
-            'province': address_component.get("province"),
+            'province': '\u6D59\u6C5F\u7701',
             # 杭州市
             # '\u676D\u5DDE\u5E02'
-            'city': address_component.get("city"),
+            'city': '\u676D\u5DDE\u5E02',
             # 是否在校
             'sfzx': '1',
             'sfjcwhry': '0',
@@ -279,21 +265,13 @@ class HealthCheckInHelper(ZJULogin):
             self.login()
             # 拿取eai-sess的cookies信息
             self.sess.get(self.REDIRECT_URL)
-            # 由于IP定位放到服务器上运行后会是服务器的IP定位
-            # location = get_ip_location()
-            # print(location)
             lng= os.getenv("lng")
             lat= os.getenv("lat")
             location = {'info': 'LOCATE_SUCCESS', 'status': 1, 'lng': lng, 'lat': lat}
             geo_info = self.get_geo_info(location)
-            # print(geo_info)
             res = self.take_in(geo_info)
-            print(res)
-            if CHAT_ID is None or TG_TOKEN is None :
-                print("telegram推送未配置，请自行查看签到结果")
-            else:   
-                #调用tg推送模块
-                post_tg('浙江大学每日健康打卡 V1.2 '+ " \n\n 签到结果: " + res.get("m")) 
+            if res:
+                print("%s打卡成功"%self.username)
         except requests.exceptions.ConnectionError as err:
             # reraise as KubeException, but log stacktrace.
             #调用tg推送模块
@@ -303,20 +281,11 @@ class HealthCheckInHelper(ZJULogin):
 
 if __name__ == '__main__':
     f_name = "account.json"
-    # 填写要自动打卡的：账号 密码, 然后自己实现循环即可帮多人打卡
-    # aps = [("<username>", "<password>")]
-    account = os.getenv("account")
-    pwd = os.getenv("pwd")
-    if account == "" or pwd == "":
-        if not os.path.exists(f_name):
-            with open(f_name, "w") as f:
-                account, pwd = input("未配置账号密码，请添加secrets").split()
-                json.dump({"account": account, "password": pwd}, f)
-        else:
-            with open(f_name, "r") as f:
-                d = json.load(f)
-                account, pwd = d.get("account"), d.get("password")
-
-    s = HealthCheckInHelper(account, pwd, delay_run=True)
-    s.run() 
+    with open(f_name, "r") as f:
+        d = json.load(f)
+        for data in d:
+            account = data["account"]
+            pwd = data["password"]
+            s = HealthCheckInHelper(account, pwd, delay_run=True)
+            s.run() 
  
