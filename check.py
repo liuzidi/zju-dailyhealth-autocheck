@@ -217,3 +217,6 @@ def Daka():
                 print("%s打卡失败！"%account)
             print("\n")
     print("打卡成功，今日（%s）为 %s位同学打卡成功"%((datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")),count))  
+
+if __name__ == "__main__":
+    Daka()
