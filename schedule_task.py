@@ -11,5 +11,6 @@ if __name__ == "__main__":
     schedule.every().day.at("00:01").do(Daka)
 
     while True:
+        print("启动打卡系统！6小时后或者明天凌晨打卡....")
         schedule.run_pending()
         time.sleep(1)
