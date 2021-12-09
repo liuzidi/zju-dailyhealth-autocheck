@@ -9,8 +9,7 @@ if __name__ == "__main__":
     schedule.every(6).hours.do(Daka)
     # 定时任务2:每天凌晨00：01时间打卡
     schedule.every().day.at("00:01").do(Daka)
-
+    print("启动打卡系统！6小时后或者明天凌晨打卡....")
     while True:
-        print("启动打卡系统！6小时后或者明天凌晨打卡....")
         schedule.run_pending()
         time.sleep(1)
