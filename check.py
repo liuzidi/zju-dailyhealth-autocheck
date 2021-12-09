@@ -3,35 +3,11 @@ import re
 import json
 import datetime
 import time
-import os
 import random
-from tgpush import post_tg
-# TG_TOKEN = os.getenv("TG_TOKEN")	#TG机器人的TOKEN
-# CHAT_ID = os.getenv("CHAT_ID")	    #推送消息的CHAT_ID
 
-#签到程序模块
 class LoginError(Exception):
     """Login Exception"""
     pass
-
-
-def get_day(delta=0):
-    """
-    获得指定格式的日期
-    """
-    today = datetime.date.today()
-    oneday = datetime.timedelta(days=delta)
-    yesterday = today - oneday
-    return yesterday.strftime("%Y%m%d")
-
-
-def take_out_json(content):
-    """
-    从字符串jsonp中提取json数据
-    """
-    s = re.search("^jsonp_\d+_\((.*?)\);?$", content)
-    return json.loads(s.group(1) if s else "{}")
-
 
 def get_date():
     """Get current date"""
@@ -61,6 +37,7 @@ class ZJULogin(object):
     def login(self):
         """Login to ZJU platform"""
         res = self.sess.get(self.LOGIN_URL)
+        # 获得execution的cookie
         execution = re.search(
             'name="execution" value="(.*?)"', res.text).group(1)
         res = self.sess.get(
@@ -98,56 +75,7 @@ class HealthCheckInHelper(ZJULogin):
 
     REDIRECT_URL = "https://zjuam.zju.edu.cn/cas/login?service=https%3A%2F%2Fhealthreport.zju.edu.cn%2Fa_zju%2Fapi%2Fsso%2Findex%3Fredirect%3Dhttps%253A%252F%252Fhealthreport.zju.edu.cn%252Fncov%252Fwap%252Fdefault%252Findex%26from%3Dwap"
 
-    def get_ip_location(self):
-        headers = {
-            'authority': 'webapi.amap.com',
-            'pragma': 'no-cache',
-            'cache-control': 'no-cache',
-            'sec-ch-ua': '"Chromium";v="92", " Not A;Brand";v="99", "Google Chrome";v="92"',
-            'sec-ch-ua-mobile': '?0',
-            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.159 Safari/537.36',
-            'accept': '*/*',
-            'sec-fetch-site': 'cross-site',
-            'sec-fetch-mode': 'no-cors',
-            'sec-fetch-dest': 'script',
-            'referer': 'https://healthreport.zju.edu.cn/',
-            'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8',
-            'cookie': 'isg=BIaGbUMSG7BxFM4x941hm4D913wI58qhRFwZi3CvdKmEcyaN2nUJsfYKT6-_W8K5',
-        }
-
-        params = (
-            ('key', '729923f88542d91590470f613adb27b5'),
-            ('callback', 'jsonp_859544_'),
-            ('platform', 'JS'),
-            ('logversion', '2.0'),
-            ('appname', 'https://healthreport.zju.edu.cn/ncov/wap/default/index'),
-            ('csid', '17F714D6-756D-49E4-96F2-B31F04B14A5A'),
-            ('sdkversion', '1.4.16'),
-        )
-        response = self.sess.get(
-            'https://webapi.amap.com/maps/ipLocation?key=729923f88542d91590470f613adb27b5&callback=jsonp_859544_&platform=JS&logversion=2.0&appname=https%3A%2F%2Fhealthreport.zju.edu.cn%2Fncov%2Fwap%2Fdefault%2Findex&csid=17F714D6-756D-49E4-96F2-B31F04B14A5A&sdkversion=1.4.16',
-            headers=headers, params=params)
-        return take_out_json(response.text)
-
-    def get_geo_info(self, location: dict):
-        params = (
-            ('key', '729923f88542d91590470f613adb27b5'),
-            ('s', 'rsv3'),
-            ('language', 'zh_cn'),
-            ('location', '{lng},{lat}'.format(lng=location.get("lng"), lat=location.get("lat"))),
-            ('extensions', 'base'),
-            ('callback', 'jsonp_607701_'),
-            ('platform', 'JS'),
-            ('logversion', '2.0'),
-            ('appname', 'https://healthreport.zju.edu.cn/ncov/wap/default/index'),
-            ('csid', '63157A4E-D820-44E1-B032-A77418183A4C'),
-            ('sdkversion', '1.4.16'),
-        )
-
-        response = self.sess.get('https://restapi.amap.com/v3/geocode/regeo', headers=self.headers, params=params, )
-        return take_out_json(response.text)
-
-    def take_in(self, geo_info: dict):
+    def take_in(self):
         res = self.sess.get(self.BASE_URL, headers=self.headers)
         # html = res.content.decode()
         # new_info_tmp = json.loads(re.findall(r'def = ({[^\n]+})', html)[0])
@@ -265,27 +193,27 @@ class HealthCheckInHelper(ZJULogin):
             self.login()
             # 拿取eai-sess的cookies信息
             self.sess.get(self.REDIRECT_URL)
-            lng= os.getenv("lng")
-            lat= os.getenv("lat")
-            location = {'info': 'LOCATE_SUCCESS', 'status': 1, 'lng': lng, 'lat': lat}
-            geo_info = self.get_geo_info(location)
-            res = self.take_in(geo_info)
+            res = self.take_in()
             if res:
-                print("%s打卡成功"%self.username)
+                print("%s打卡成功"%(self.username))
         except requests.exceptions.ConnectionError as err:
-            # reraise as KubeException, but log stacktrace.
-            #调用tg推送模块
-            post_tg('统一认证平台登录失败,请检查github服务器网络状态')
+            print('网络请求失败...')
 
 
-
-if __name__ == '__main__':
+def Daka():
     f_name = "account.json"
+    print("当前时间%s,开始打卡...\n"%datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     with open(f_name, "r") as f:
         d = json.load(f)
+        count = 0
         for data in d:
             account = data["account"]
             pwd = data["password"]
-            s = HealthCheckInHelper(account, pwd, delay_run=True)
-            s.run() 
- 
+            try:
+                s = HealthCheckInHelper(account, pwd, delay_run=True)
+                s.run() 
+                count += 1    
+            except:
+                print("%s打卡失败！"%account)
+            print("\n")
+    print("打卡成功，今日（%s）为 %s位同学打卡成功"%((datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")),count))  
