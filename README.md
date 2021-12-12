@@ -29,7 +29,7 @@ Mrli学长原库链接：https://github.com/Freedomisgood/When_Coding_in_ZJU/tre
 
 2. schedule_task为定时脚本，可以设置每日固定时间或者固定每隔一个周期时间进行一次打卡操作
 3. add_account为加账户脚本，用户可执行`python -u .\add_account.py 123123123 xxxx`给account.json文件增加账号密码信息，此功能为jenkins部署时使用，正常直接修改account.json文件即可
-4. jenkins说明请参考https://www.jenkins.io/，一个可以将自己计算机作为服务器，定时或者用某些条件触发的情况下自动跑自己想要的脚本的开源自动化服务器。
+4. Jenkins:一个可以将自己计算机作为服务器，定时或者用某些条件触发的情况下自动跑自己想要的脚本的开源自动化服务器。jenkins说明请参考https://www.jenkins.io
 
 ## 声明
 
