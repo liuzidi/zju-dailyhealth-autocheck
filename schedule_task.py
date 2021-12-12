@@ -1,6 +1,6 @@
 import schedule
 import time
-from check import Daka
+from Daka import Daka
 
 
 
