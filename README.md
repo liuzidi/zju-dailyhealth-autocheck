@@ -31,6 +31,8 @@ Mrli学长原库链接：https://github.com/Freedomisgood/When_Coding_in_ZJU/tre
 3. add_account为加账户脚本，用户可执行`python -u .\add_account.py 123123123 xxxx`给account.json文件增加账号密码信息，此功能为jenkins部署时使用，正常直接修改account.json文件即可
 4. Jenkins:一个可以将自己计算机作为服务器，定时或者用某些条件触发的情况下自动跑自己想要的脚本的开源自动化服务器。jenkins说明请参考https://www.jenkins.io
 
+## 注意
+请勿将本地的account.json文件push到github库，里面可能含有本人的信息，可能会造成信息泄漏！！
 ## 声明
 
 本项目为Python学习交流的开源非营利项目，仅作为程序员之间相互学习交流之用。
