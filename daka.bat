@@ -1,0 +1,1 @@
+python -u .\schedule_task.py
